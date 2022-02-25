@@ -1,0 +1,255 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>
+        Test na výzkum demence
+    </title>
+    <audio id="audioout"></audio>
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css" type="text/css" >
+
+    <!-- Scripts -->
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="script.js" type="text/javascript"></script>
+    <script src="https://cak.zcu.cz:9444/speechcloud.js"></script>
+    
+
+</head>
+<body onload="onBodyLoad()">
+<div id="checkMicrophone">
+    <div class="high-center" style="font-size:x-large"><b>Aby aplikace dobře fungovala, je třeba mít<b><br>
+            1. mít připojený a zapnutý mikrofon, jinak aplikace nebude fungovat. <br>
+            2. mít připojené a zapnuté reproduktory, jinak neuslyšíte instrukce.<br><br>
+            Pro zahájení nahrávání stisknětě tlačítko ZAČÍT<br>
+        Pokud na tlačítko ZAČÍT nemůžete kliknout, nemáte zapojený mikrofón nebo reproduktory</div>
+        
+    <button id="start" class="button_start center" style="display: block;" onclick="checkMicrophoneFcn()" disabled>ZAČÍT</button>
+</div>
+<div id="patientIdentification" style="display: none;">
+
+    <label for="testDate">Datum vyšetření: </label>
+        <input type="date" id="testDate" name="testDate"
+            min="2021-01-01" max="2100-12-31">
+        <br><br>
+    <label for="place">Místo vyšetření:</label>
+            <select name="place" id="place">
+                <option value="FKNV">FKNV</option>
+            </select>
+        <br><br>
+        <p>Kategorie pacienta:</p>
+            <input type="radio" id="patientCategory" name="patient" value="Pacient">
+        <label for="patient">Pacient</label><br>
+            <input type="radio" id="patientCategory" name="regular" value="Normální osoba">
+        <label for="regular">Normální osoba</label><br>
+            <input type="radio" id="patientCategory" name="adultChild" value="Dospělé dítě pacienta">
+        <label for="adultChild">Dospělé dítě pacienta</label>
+        <br><br>
+    <label for="patientId">Identifikační číslo osoby: </label>
+        <input type="number" id="patientId" name="patientId" readonly="readonly"><br><br>
+    <label for="fname">Křestní jméno: </label>
+        <input type="text" id="fname" name="fname"><br><br>
+    <label for="lname">První písmeno příjmení: </label>
+        <input type="text" id="lname" name="lname"><br><br>
+    <label for="dateOfBirth">Datum narození: </label>
+        <input type="date" id="dateOfBirth" name="dateOfBirth"
+                value="1970-01-01"
+                min="1920-01-01" max="2100-12-31">
+        <br><br>
+    <label for="residence">Místo bydliště: </label>
+        <input type="text" id="residence" name="residence"><br><br>
+    <label for="abadeco">Identifikační číslo v projektu ABADECO: </label>
+        <input type="text" id="abadeco" name="abadeco"><br><br>
+    <button id="registerBtn" onclick="patientIdentificationFcn()">Zaregistrovat</button>
+</div>
+
+
+<div id="numbersRepeating" style="display: none;">
+        
+        <div id="log" class="center" style="font-size:x-large"></div>
+        <button id="next_number" class="button_next center" style="display: none;" onclick="nextNumberFcn()">Další číslo</button>
+        <button id="next_test" class="button_next center" style="display: none;" onclick="nextTestFcn()">Pokračovat</button>
+    
+</div>
+<div id="lakePicture" style="display: none;">
+
+        <button id="next_test2" class="button_next center" onclick="nextTestFcn()">Pokračovat</button>
+    
+        <img src="./pictures/obr.jpg" style="top: 57%;" class="centerImage" id="breh"  width="900" height="600">
+    
+        <span id="countdown_0" class="higher-center" style="display: none;">60s</span>
+            
+        <div id="upper_log" class="higher-center" style="font-size:x-large"></div>
+    
+</div>
+<div id="animalsRemembering" style="display: none;">
+    
+        <span id="countdown_1" class="high-center" style="display: none;">30s</span>
+        
+        <div id="log2" class="center" style="font-size:x-large"></div>
+       
+</div>
+
+<div id="end" style="display: none;">
+
+    <img src="./pictures/well_done.jpg" class="center" id="well_done"  width="300" height="300">
+   
+</div>
+<script>
+    // SIP session, tj. hovor
+    var session;
+    
+    // Výchozí URI, odkud se stáhne konfigurace ASR+TTS - probably unneccesary for now
+    var SPEECHCLOUD_URI = "https://cak.zcu.cz:9444/index.html?devel/polakf/base";
+
+    // Proměnná pro udržení odkazu na řídící WebSocket
+    var SPEECHCLOUD_WS = null;
+    $( document ).ready(function() {
+        var call_timeout = null;
+
+        var model_uri = "https://cak.zcu.cz:9443/v1/speechcloud/devel/polakf/base"
+
+        var options = {
+            uri: model_uri,
+            tts: "#audioout",
+            disable_audio_processing: true
+        }
+
+        var speechCloud = new SpeechCloud(options);
+
+        window.speechCloud = speechCloud
+
+        speechCloud.init(); 
+        console.log("speechCloud is heeeeeeeere", speechCloud);
+
+
+   
+        /* Při příchodu asr_ready (ASR připraveno) */
+speechCloud.on('asr_ready', function () {
+    /*//do dokonceni promluvy tlacitko deaktivovane
+    document.getElementById('log').style.display='none';
+    document.getElementById('start').style.display='block';
+    text_to_say = "Pro zahájení nahrávání, stiskněte prosím tlačítko začít.";
+    do_tts(text_to_say);
+    
+    speechCloud.on('tts_done', function proceed_0() {
+        if(test_idx == -1){
+            document.getElementById("start").disabled = false;
+        }
+            
+                })*/
+    console.log("ASR ready, enabling startBtn")
+    document.getElementById("start").disabled = false
+});
+
+speechCloud.on('dm_receive_message', function (message) {
+    
+    if(message.data.message === "last_id")  {
+        last_id = message.data.data.last_id
+        patientId = last_id + 1
+        document.getElementById("patientId").value = patientId;
+    }
+    console.log("dm_receive_message", message)
+});
+
+speechCloud.on('asr_audio_record', function (msg) {
+    console.log("ASR audio: ", msg)
+    var params = {
+        topic: "ASR_audio",
+        msg: msg
+    }
+    speechCloud.dm_send_message({data: JSON.stringify(params)})
+    //hlog("<b>ASR audio</b> <a href='"+ msg.uri +"' target='_blank'>" + msg.id + "</a>, tstamp="+msg.tstamp);
+});
+
+/* Při příchodu ASR výsledku */
+speechCloud.on('asr_result', function (msg) {
+
+    if (msg.partial_result) {
+        return;
+    }
+    switch(test_idx){
+        case -1:
+            if(msg.result != ''){
+                //console.log("here asr")
+                numbers.pop();
+                if(numbers.length != 0){
+
+                    document.getElementById('log').style.display='none';
+                    document.getElementById('next_number').style.display='block';
+                }
+                else{
+                    document.getElementById('log').style.display='none';
+                    //document.getElementById('next_test').style.display='block';
+                    proceed_to_next_test();
+                }   
+                
+            }
+            console.log("Result", msg)
+            break;
+        case 0:
+            console.log("Result", msg);
+            break;
+        case 1:
+            if(msg.result.length == 1){
+                if (animals.includes(msg.result) && msg.result != "" && animals_already_understood.indexOf(msg.result) == -1){
+                    animals_understood = animals_understood + 1;
+                    animals_already_understood.push(msg.result)
+                    }
+                /*
+                else{
+                    continue;
+                    }*/
+                }
+            else if(msg.result.length > 1){
+                if (animals.includes(msg.result) && animals_already_understood.indexOf(msg.result) == -1){
+                    animals_understood = animals_understood + 1
+                    
+                    animals_already_understood.push(msg.result)
+                    }
+                    /*
+                else if(animals.includes(msg.result) && animals_already_understood.indexOf(msg.result) != -1){
+                    continue;
+                }*/
+                else{
+                    var words = msg.result.split(" ");
+
+                    $(words).each(function(index, hyp) {
+                        if(animals.includes(hyp) && animals_already_understood.indexOf(hyp) == -1){
+                            animals_understood = animals_understood + 1
+                            animals_already_understood.push(hyp)
+                            }/*
+                        else if(animals.includes(hyp) && animals_already_understood.indexOf(hyp) != -1){
+                            continue;
+                        }*/
+                        else if(index < words.length){
+                            if(animals.includes(words[index] + " " + words[index + 1]) && animals_already_understood.indexOf(words[index] + " " + words[index + 1]) == -1){
+                                animals_understood = animals_understood + 1;
+                                animals_already_understood.push(words[index] + " " + words[index + 1])
+                            }
+                            /*
+                            else{
+                                continue;
+                            }*/
+                        }
+                        
+                        });
+                    }
+            }
+        
+        console.log("Result", msg);
+        break;
+        }
+    
+    
+});
+
+speechCloud.on('asr_audio_record', function (msg) {
+    console.log("ASR audio: ", msg)
+    //hlog("<b>ASR audio</b> <a href='"+ msg.uri +"' target='_blank'>" + msg.id + "</a>, tstamp="+msg.tstamp);
+});
+    })
+
+
+</script>
+</body>
+</html>
