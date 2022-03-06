@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <title>
-        Test na výzkum demence
+        Výzkum řeči
     </title>
     <audio id="audioout"></audio>
     <!-- Styles -->
@@ -26,7 +26,7 @@
     <button id="start" class="button_start center" style="display: block;" onclick="checkMicrophoneFcn()" disabled>ZAČÍT</button>
 </div>
 <div id="patientIdentification" style="display: none;">
-
+    <div id="upper_log2" class="higher-center" style="font-size:x-large; visibility: hidden; color:red">Musíte vyplnit všechny údaje!</div>
     <label for="testDate">Datum vyšetření: </label>
         <input type="date" id="testDate" name="testDate"
             min="2021-01-01" max="2100-12-31">
@@ -37,7 +37,7 @@
             </select>
         <br><br>
         <p>Kategorie pacienta:</p>
-            <input type="radio" id="patientCategory" name="patient" value="Pacient">
+            <input type="radio" id="patientCategory" name="patient" value="Pacient" checked>
         <label for="patient">Pacient</label><br>
             <input type="radio" id="patientCategory" name="regular" value="Normální osoba">
         <label for="regular">Normální osoba</label><br>
@@ -59,6 +59,91 @@
         <input type="text" id="residence" name="residence"><br><br>
     <label for="abadeco">Identifikační číslo v projektu ABADECO: </label>
         <input type="text" id="abadeco" name="abadeco"><br><br>
+    <p>Test ALBA:</p>
+    <label for="sentenceRepeating">Opakování vět:</label>
+    <select name="sentenceRepeating" id="sentenceRepeating">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+    </select><br><br>
+    <label for="sentenceRemembering">Vybavení vět:</label>
+    <select name="sentenceRemembering" id="sentenceRemembering">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+    </select><br><br>
+    <label for="gesturesExecuting">Předvedení gest:</label>
+    <select name="gesturesExecuting" id="gesturesExecuting">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+    </select><br><br>
+    <label for="gesturesRemembering">Vybavení gest:</label>
+    <select name="gesturesRemembering" id="gesturesRemembering">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+    </select>
+    <br><br>
+    <p>Test POBAV:</p>
+    <label for="namingMistakes">Chyby v pojmenování:</label>
+    <select name="namingMistakes" id="namingMistakes">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+    </select><br><br>
+    <label for="picturesRemembered">Správně vybavené obrázky:</label>
+    <select name="picturesRemembered" id="picturesRemembered">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+    </select><br><br>
     <button id="registerBtn" onclick="patientIdentificationFcn()">Zaregistrovat</button>
 </div>
 

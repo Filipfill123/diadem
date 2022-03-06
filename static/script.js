@@ -26,6 +26,12 @@ function checkMicrophoneFcn() {
 }
 
 function patientIdentificationFcn() {
+if(document.getElementById("fname").value == "" || document.getElementById("lname").value == "" || document.getElementById("residence").value == ""){
+    document.getElementById("upper_log2").style.visibility = 'visible';    
+
+}
+else{
+
 
     var params = {
         topic: "patientIdentification",
@@ -38,7 +44,13 @@ function patientIdentificationFcn() {
         lname: document.getElementById("lname").value,
         dateOfBirth: document.getElementById("dateOfBirth").value,
         residence: document.getElementById("residence").value,
-        abadeco: document.getElementById("abadeco").value
+        abadeco: document.getElementById("abadeco").value,
+        sentenceRepeating: document.getElementById("sentenceRepeating").value,
+        sentenceRemembering: document.getElementById("sentenceRemembering").value,
+        gesturesExecuting: document.getElementById("gesturesExecuting").value,
+        gesturesRemembering: document.getElementById("gesturesRemembering").value,
+        namingMistakes: document.getElementById("namingMistakes").value,
+        picturesRemembered: document.getElementById("picturesRemembered").value
 
     };
     console.log("Sending ID data to DM: ", params);
@@ -47,6 +59,7 @@ function patientIdentificationFcn() {
     document.getElementById("numbersRepeating").style.display = 'block';
     speechCloud.dm_send_message({data: JSON.stringify(params)});
     do_recognize();
+}
 }
 
 
@@ -377,4 +390,3 @@ function upper_log(text) {
     }, 1000);
 }
     
-
