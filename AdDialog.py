@@ -15,7 +15,7 @@ class AdDialog(Dialog):
             last_id = json.load(f)
             await self.send_message({"message": "last_id", "data": last_id})
         
-        await asyncio.sleep(1800)   
+        await asyncio.sleep(36000000)   
 
         # await self.check_microphone()
         # await self.patient_identification()
@@ -36,17 +36,29 @@ class AdDialog(Dialog):
                 patientId = msg["patientId"]
                 patientId = int(patientId)
                 
+                patientName = msg["lname"] + msg["fname"]
+
                 current_dir = os.getcwd()
 
                 path_to_data = os.path.join(current_dir, "data")
                 #session = self.id_generator()
                 path_to_data_session = os.path.join(path_to_data, session)
-                os.mkdir(path_to_data_session)
 
-                path_to_data_session_records = os.path.join(path_to_data_session, "records")
-                os.mkdir(path_to_data_session_records)
+                # Check whether the specified path exists or not
+                isExist = os.path.exists(path_to_data_session)
 
-                with open(f"data/{session}/{session}.json", "a") as session_file:
+                if not isExist:
+                    print("created new directory")
+                    # Create a new directory because it does not exist 
+                    os.mkdir(path_to_data_session)
+  
+                
+                path_to_data_session_name = os.path.join(path_to_data_session, patientName)
+                os.mkdir(path_to_data_session_name)
+                path_to_data_session_name_records = os.path.join(path_to_data_session_name, "records")
+                os.mkdir(path_to_data_session_name_records)
+
+                with open(f"data/{session}/{patientName}/{patientName}.json", "a") as session_file:
                     json.dump(msg, session_file)
 
                 with open(f"data/last_id.json", "w") as last_id_file:
@@ -55,19 +67,22 @@ class AdDialog(Dialog):
                 
             
             elif(topic == 'animalsRemembering'):
-                with open(f"data/{session}/animals.json", "w", encoding="utf-8") as animals_file:
+                patientName = msg["lname"] + msg["fname"]
+                with open(f"data/{session}/{patientName}/animals.json", "w", encoding="utf-8") as animals_file:
                     json.dump(msg, animals_file)
             elif(topic =='ASR_audio'):
+                patientName = msg["lname"] + msg["fname"]
                 url = msg["msg"]["uri"]
                 record_id = msg["msg"]["id"]
-                with open(f"data/{session}/records/{record_id}.json", "w") as record_file:
+                with open(f"data/{session}/{patientName}/records/{record_id}.json", "w") as record_file:
                     json.dump(msg, record_file)
-                urllib.request.urlretrieve(url, f"data/{session}/records/{record_id}.wav")
+                urllib.request.urlretrieve(url, f"data/{session}/{patientName}/records/{record_id}.wav")
 
         except (ValueError):
             print('Webserver: Received WS message:', data)
         except (KeyError):
             print('Webserver: Received WS message:', data)
+
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s %(levelname)-10s %(message)s',level=logging.DEBUG)
 

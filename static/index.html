@@ -16,16 +16,8 @@
 
 </head>
 <body onload="onBodyLoad()">
-<div id="checkMicrophone">
-    <div class="high-center" style="font-size:x-large"><b>Aby aplikace dobře fungovala, je třeba mít<b><br>
-            1. mít připojený a zapnutý mikrofon, jinak aplikace nebude fungovat. <br>
-            2. mít připojené a zapnuté reproduktory, jinak neuslyšíte instrukce.<br><br>
-            Pro zahájení nahrávání stisknětě tlačítko ZAČÍT<br>
-        Pokud na tlačítko ZAČÍT nemůžete kliknout, nemáte zapojený mikrofón nebo reproduktory</div>
-        
-    <button id="start" class="button_start center" style="display: block;" onclick="checkMicrophoneFcn()" disabled>ZAČÍT</button>
-</div>
-<div id="patientIdentification" style="display: none;">
+
+<div id="patientIdentification">
     <div id="upper_log2" class="higher-center" style="font-size:x-large; visibility: hidden; color:red">Musíte vyplnit všechny údaje!</div>
     <label for="testDate">Datum vyšetření: </label>
         <input type="date" id="testDate" name="testDate"
@@ -35,14 +27,18 @@
             <select name="place" id="place">
                 <option value="FKNV">FKNV</option>
             </select>
-        <br><br>
-        <p>Kategorie pacienta:</p>
-            <input type="radio" id="patientCategory" name="patient" value="Pacient" checked>
+        <br>
+        <p>Kategorie osoby:</p>
+            <input type="radio" id="patientCategory" name="patientCategory" value="patient" checked>
         <label for="patient">Pacient</label><br>
-            <input type="radio" id="patientCategory" name="regular" value="Normální osoba">
+            <input type="radio" id="patientCategory" name="patientCategory" value="regular">
         <label for="regular">Normální osoba</label><br>
-            <input type="radio" id="patientCategory" name="adultChild" value="Dospělé dítě pacienta">
-        <label for="adultChild">Dospělé dítě pacienta</label>
+            <input type="radio" id="patientCategory" name="patientCategory" value="adultChild">
+        <label for="adultChild">Dospělé dítě pacienta</label><br>
+            <input type="radio" id="patientCategory" name="patientCategory" value="SVABADECO">
+        <label for="SVABADECO">Normální osoba SVABADECO online</label><br>
+            <input type="radio" id="patientCategory" name="patientCategory" value="TEST">
+        <label for="TEST">TESTOVÁNÍ APLIKACE</label>
         <br><br>
     <label for="patientId">Identifikační číslo osoby: </label>
         <input type="number" id="patientId" name="patientId" readonly="readonly"><br><br>
@@ -59,9 +55,18 @@
         <input type="text" id="residence" name="residence"><br><br>
     <label for="abadeco">Identifikační číslo v projektu ABADECO: </label>
         <input type="text" id="abadeco" name="abadeco"><br><br>
+
+    <input type="radio" id="ALBA_type" name="ALBA_type" value="personal_ALBA" checked>
+        <label for="personal_ALBA">Osobní ALBA POBAV</label><br>
+    <input type="radio" id="ALBA_type" name="ALBA_type" value="electronic_ALBA">
+        <label for="electronic_ALBA">Elektronické ALBA POBAV</label><br><br>
     <p>Test ALBA:</p>
+    
+        
     <label for="sentenceRepeating">Opakování vět:</label>
     <select name="sentenceRepeating" id="sentenceRepeating">
+        <option value="NA">NA</option>
+        <option value="0">0</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -71,6 +76,8 @@
     </select><br><br>
     <label for="sentenceRemembering">Vybavení vět:</label>
     <select name="sentenceRemembering" id="sentenceRemembering">
+        <option value="NA">NA</option>
+        <option value="0">0</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -80,6 +87,8 @@
     </select><br><br>
     <label for="gesturesExecuting">Předvedení gest:</label>
     <select name="gesturesExecuting" id="gesturesExecuting">
+        <option value="NA">NA</option>
+        <option value="0">0</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -89,6 +98,8 @@
     </select><br><br>
     <label for="gesturesRemembering">Vybavení gest:</label>
     <select name="gesturesRemembering" id="gesturesRemembering">
+        <option value="NA">NA</option>
+        <option value="0">0</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -100,6 +111,8 @@
     <p>Test POBAV:</p>
     <label for="namingMistakes">Chyby v pojmenování:</label>
     <select name="namingMistakes" id="namingMistakes">
+        <option value="NA">NA</option>
+        <option value="0">0</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -123,6 +136,8 @@
     </select><br><br>
     <label for="picturesRemembered">Správně vybavené obrázky:</label>
     <select name="picturesRemembered" id="picturesRemembered">
+        <option value="NA">NA</option>
+        <option value="0">0</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -143,14 +158,65 @@
         <option value="18">18</option>
         <option value="19">19</option>
         <option value="20">20</option>
+    </select><br><br><br><br>
+    <label for="FAQ">Soběstačnost podle vyplnění dotazníku FAQ od blízké osoby:</label>
+    <select name="FAQ" id="FAQ">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="27">27</option>
+        <option value="28">28</option>
+        <option value="29">29</option>
+        <option value="30">30</option>
     </select><br><br>
-    <button id="registerBtn" onclick="patientIdentificationFcn()">Zaregistrovat</button>
-</div>
 
+    <button id="registerBtn" onclick="patientIdentificationFcn()" disabled>Zaregistrovat</button>
+    <p>Aby aplikace dobře fungovala, je třeba mít<br>
+        1. mít připojený a zapnutý mikrofon, jinak aplikace nebude fungovat <br>
+        2. mít připojené a zapnuté reproduktory, jinak neuslyšíte instrukce <br><br>
+        Pro zahájení nahrávání stisknětě tlačítko "Zaregistrovat"<br>
+    Pokud na tlačítko "Zaregistrovat" nemůžete kliknout, nemáte zapojený mikrofón nebo reproduktory</p>
+</div>
+<div id="instructions" style="display: none;">
+    <div class="high-center" style="font-size:x-large">
+        
+        Stiskem tlačítka zahájíte sluchovou zkoušku pomocí opakování tří trojciferných čísel.<br><br>
+            1. Zajistěte, aby nikdo jiný v místnosti nemluvil nebo se neozýval jiný zvuk než slovní odpověď účastníka, tj. aby bylo v místnosti ticho. <br>
+            2. Dbejte na to, aby účastník mluvil zřetelně a nahlas.<br>
+            3. Zajistěte, aby mikrofon byl co nejblíže účastníkovi, aby nahrávka řeči byla kvalitní. <br>
+            4. Pokud účastník nosí brýle či naslouchátka, ať si je nasadí. <br><br>
+            Pro zahájení nahrávání stisknětě tlačítko ZAČÍT<br></div>
+        
+    <button id="start" class="button_start center" style="display: block;" onclick="startRecording()">ZAČÍT</button>
+</div>
 
 <div id="numbersRepeating" style="display: none;">
         
-        <div id="log" class="center" style="font-size:x-large"></div>
+        <div id="log" class="center" style="font-size:x-large; display: none;"></div>
         <button id="next_number" class="button_next center" style="display: none;" onclick="nextNumberFcn()">Další číslo</button>
         <button id="next_test" class="button_next center" style="display: none;" onclick="nextTestFcn()">Pokračovat</button>
     
@@ -223,7 +289,7 @@ speechCloud.on('asr_ready', function () {
             
                 })*/
     console.log("ASR ready, enabling startBtn")
-    document.getElementById("start").disabled = false
+    document.getElementById("registerBtn").disabled = false
 });
 
 speechCloud.on('dm_receive_message', function (message) {
@@ -240,6 +306,8 @@ speechCloud.on('asr_audio_record', function (msg) {
     console.log("ASR audio: ", msg)
     var params = {
         topic: "ASR_audio",
+        fname: document.getElementById("fname").value,
+        lname: document.getElementById("lname").value,
         msg: msg
     }
     speechCloud.dm_send_message({data: JSON.stringify(params)})

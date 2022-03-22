@@ -15,13 +15,14 @@ function onSocketClose() {
     console.log("WS client: Websocket closed.");
 }
 
-function checkMicrophoneFcn() {
+function startRecording() {
     var params = {
-        topic: "checkMicrophone"
+        topic: "startRecording"
     };
-    console.log("checkMicrophone done, showing patientIdentification");
-    document.getElementById("checkMicrophone").style.display = 'none';
-    document.getElementById("patientIdentification").style.display = 'block';
+    console.log("startRecording done, showing patientIdentification");
+    document.getElementById("numbersRepeating").style.display = 'block';
+    document.getElementById("instructions").style.display = 'none';
+    do_recognize();
     
 }
 
@@ -45,20 +46,22 @@ else{
         dateOfBirth: document.getElementById("dateOfBirth").value,
         residence: document.getElementById("residence").value,
         abadeco: document.getElementById("abadeco").value,
+        ALBA_type: document.getElementById("ALBA_type").value,
         sentenceRepeating: document.getElementById("sentenceRepeating").value,
         sentenceRemembering: document.getElementById("sentenceRemembering").value,
         gesturesExecuting: document.getElementById("gesturesExecuting").value,
         gesturesRemembering: document.getElementById("gesturesRemembering").value,
         namingMistakes: document.getElementById("namingMistakes").value,
-        picturesRemembered: document.getElementById("picturesRemembered").value
+        picturesRemembered: document.getElementById("picturesRemembered").value,
+        FAQ: document.getElementById("FAQ").value
 
     };
     console.log("Sending ID data to DM: ", params);
     console.log("patientIdentification done, showing numbersRepeating");
     document.getElementById("patientIdentification").style.display = 'none';
-    document.getElementById("numbersRepeating").style.display = 'block';
+    document.getElementById("instructions").style.display = 'block';
     speechCloud.dm_send_message({data: JSON.stringify(params)});
-    do_recognize();
+    //do_recognize();
 }
 }
 
@@ -72,7 +75,6 @@ function numbersRepeatingFcn() {
     document.getElementById("numbersRepeating").style.display = 'none';
     document.getElementById("lakePicture").style.display = 'block';
     
-    //ws.send(JSON.stringify(params))
 }
 
 function lakePictureFcn() {
@@ -86,12 +88,13 @@ function lakePictureFcn() {
 
     
     
-    //ws.send(JSON.stringify(params))
 }
 
 function animalsRememberingFcn() {
     var params = {
         topic: "animalsRemembering",
+        fname: document.getElementById("fname").value,
+        lname: document.getElementById("lname").value,
         animals_understood: animals_understood,
         animals_already_understood: animals_already_understood
     };
@@ -101,7 +104,49 @@ function animalsRememberingFcn() {
     document.getElementById("end").style.display = 'block';
     console.log("Sending animals data to DM: ", params);
     speechCloud.dm_send_message({data: JSON.stringify(params)});
-    //ws.send(JSON.stringify(params))
+    setTimeout(function() { appResetFcn(); }, 10000);
+
+}
+
+function appResetFcn() {
+    test_idx = -1;
+    numbers = ["941", "726", "583"]
+
+    var image = document.getElementById('breh');
+    if(image && image.style) {
+        image.style.height = '600px';
+        image.style.width = '900px';
+        image.style.top = '50%'
+        
+        }
+
+    document.getElementById('log').style.display='none';
+
+    var params = {
+        topic: "appReset",
+        animals_understood: animals_understood,
+        animals_already_understood: animals_already_understood
+    };
+    console.log("appReset done, showing patientIdentification");
+
+    document.getElementById("end").style.display = 'none';
+    document.getElementById("patientIdentification").style.display = 'block';
+
+    document.getElementById('testDate').value = new Date().toDateInputValue();
+    document.getElementById("place").value = "FKNV";
+    document.getElementById("fname").value = "";
+    document.getElementById("lname").value = "";
+    document.getElementById("dateOfBirth").value = "1970-01-01";
+    document.getElementById("residence").value = "";
+    document.getElementById("abadeco").value = "";
+    document.getElementById("sentenceRepeating").value = "NA";
+    document.getElementById("sentenceRemembering").value = "NA";
+    document.getElementById("gesturesExecuting").value = "NA";
+    document.getElementById("gesturesRemembering").value = "NA";
+    document.getElementById("namingMistakes").value = "NA";
+    document.getElementById("picturesRemembered").value = "NA";
+    document.getElementById("FAQ").value = "0";
+    //speechCloud.dm_send_message({data: JSON.stringify(params)});
 }
 
 
@@ -181,7 +226,17 @@ function upper_log(text) {
                         recognizing = true;
                         document.getElementById('upper_log').style.display='none';
                         document.getElementById('countdown_0').style.display='block';
+                        var image = document.getElementById('breh');
+                        if(image && image.style) {
+                            image.style.height = '680px';
+                            image.style.width = '1100px';
+                            image.style.top = '50%';
+                        }
 
+                        var countdown_position = document.getElementById('countdown_0');
+                        if(countdown_position && countdown_position.style) {
+                            countdown_position.style.left = '35px';
+                        }
                         startTimer();
 
                         handled_recog_0 = true;
